@@ -1,14 +1,10 @@
-// src/types/movieApi.ts
 import type { Movie } from "./movie";
 
-export interface FetchMoviesParams {
-  query: string;
-  page?: number;
+export interface MovieGridProps {
+  movies: Movie[];
+  onSelect: (movie: Movie) => void;
 }
 
-export interface FetchMoviesResponse {
-  page: number;
-  results: Movie[];
-  total_pages: number;
-  total_results: number;
+export interface SearchBarProps {
+  onSubmit: (query: string) => void;
 }
