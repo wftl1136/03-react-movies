@@ -1,10 +1,15 @@
 import { useEffect } from "react";
+import { createPortal } from "react-dom";
 import styles from "./MovieModal.module.css";
-import type { MovieModalProps } from "../../types/movie";
+import type { Movie } from "../../types/movie";
+
+interface MovieModalProps {
+  movie: Movie;
+  onClose: () => void;
+}
 
 export default function MovieModal({ movie, onClose }: MovieModalProps) {
   useEffect(() => {
-    // scrollbar width calc and disable
     const originalOverflow = document.body.style.overflow;
     const originalPaddingRight = document.body.style.paddingRight;
     const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
@@ -12,14 +17,11 @@ export default function MovieModal({ movie, onClose }: MovieModalProps) {
     document.body.style.paddingRight = `${scrollbarWidth}px`;
 
     const handleEsc = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        onClose();
-      }
+      if (event.key === "Escape") onClose();
     };
     document.addEventListener("keydown", handleEsc);
 
     return () => {
-      // scrollbar restore
       document.body.style.overflow = originalOverflow || "auto";
       document.body.style.paddingRight = originalPaddingRight || "";
       document.removeEventListener("keydown", handleEsc);
@@ -27,9 +29,7 @@ export default function MovieModal({ movie, onClose }: MovieModalProps) {
   }, [onClose]);
 
   const handleBackdropClick = (event: React.MouseEvent<HTMLDivElement>) => {
-    if (event.target === event.currentTarget) {
-      onClose();
-    }
+    if (event.target === event.currentTarget) onClose();
   };
 
   const imageSrc = movie.backdrop_path
@@ -38,7 +38,7 @@ export default function MovieModal({ movie, onClose }: MovieModalProps) {
     ? `https://image.tmdb.org/t/p/original${movie.poster_path}`
     : "https://www.themoviedb.org/assets/2/v4/logos/v2/blue_square_2-d537fb228cf3ded904ef09b136fe3fec72548ebc1fea3fbbd1ad9e36364db38b.svg";
 
-  return (
+  return createPortal(
     <div
       className={styles.backdrop}
       role="dialog"
@@ -56,13 +56,12 @@ export default function MovieModal({ movie, onClose }: MovieModalProps) {
           <p>
             <strong>Release Date:</strong> {movie.release_date || "Unknown"}
           </p>
-          {typeof movie.vote_average === "number" && (
-            <p>
-              <strong>Rating:</strong> {movie.vote_average}/10
-            </p>
-          )}
+          <p>
+            <strong>Rating:</strong> {movie.vote_average}/10
+          </p>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
