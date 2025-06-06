@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { FetchMoviesParams, FetchMoviesResponse } from "../types/movie";
+import type { FetchMoviesParams, FetchMoviesResponse } from "../../types/movie";
 
 export async function fetchMovies({
   query,
